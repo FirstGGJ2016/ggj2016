@@ -2,10 +2,33 @@
   <title>ggj2016</title>
   <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
   <script src="/keyboard.js"></script>
+  <style>
+    #login-buttons{
+      position:absolute;
+      top: 15px;
+      left: 15px;
+      z-index: 100;
+      color: white;
+      -moz-user-select: none;
+      -khtml-user-select: none;
+      -webkit-user-select: none;
+      -o-user-select: none;
+    }
+    canvas{
+      z-index: 50;
+      border: 0;
+      padding: 0;
+    }
+    body, html{
+      margin:0;
+      padding: 0;
+      overflow: hidden;
+    }
+  </style>
 </head>
 
 <body>
   {{> loginButtons}}
-  
+
   {{> room}}
 </body>

@@ -4,7 +4,7 @@ var Room = Game.Room = function () {
   this.create();
 };
 
-Room.WALL_GEOMETRY_PATH = '/textures/wall.js';
+Room.WALL_TEXTURE_PATH = '/textures/wall-texture.jpg';
 Room.WALL_WIDTH = 60;
 Room.WALL_HEIGHT = 20;
 
@@ -16,6 +16,8 @@ Room.WALLS_POSITIONS = [
   // {x: -9, y: 10, z: 0}
 ];
 
+Room.ROOF_TEXTURE_PATH = '/textures/ceil-texture.png';
+Room.FLOOR_TEXTURE_PATH = '/textures/floor-texture.jpg';
 Room.ROOF_WIDTH = Room.FLOOR_WIDTH = Room.ROOF_HEIGHT = Room.FLOOR_HEIGHT = 60;
 
 Room.ROOF_POSITION = {x: 0, y: 10, z: 0};
@@ -23,15 +25,15 @@ Room.FLOOR_POSITION = {x: 0, y: -10, z: 0};
 Room.ROOF_ROTATION = Room.FLOOR_ROTATION = {x: 1.5708, y: 0, z: 0};
 
 Room.WALLS_ROTATIONS = [
-  {x: 0, y: 0, z: 3.14159},
-  {x: 0, y: 0, z: 3.14159},
-  {x: 0, y: 1.5708, z: 3.14159},
-  {x: 0, y: 1.5708, z: 3.14159}
+  {x: 0, y: 0, z: 6.28319},
+  {x: 0, y: 0, z: 6.28319},
+  {x: 0, y: 1.5708, z: 6.28319},
+  {x: 0, y: 1.5708, z: 6.28319}
   // {x: 1,y: 0,z: 1}
 ];
 
 Room.CAMERA_ROTATION_ANGLE = 1;
-Room.CAMERA_MOVEMENT = 5;
+Room.CAMERA_MOVEMENT = 2;
 Room.MOUSE_SENSIBILITY = 0.05;
 
 Room.prototype.start = function () {
@@ -58,30 +60,30 @@ Game.Room.prototype.create = function () {
 
   this.renderer = this._createRenderer();
 
-  this.box = new THREE.Object3D();
-
-  this.box.add(new THREE.Mesh(
-    new THREE.BoxGeometry( 1, 1, 1 ),
-    // new THREE.SphereGeometry(0.5, 32, 32),
-    new THREE.MeshPhongMaterial({color: 0x31B404, vertexColors: THREE.VertexColors})
-  ));
-
-  // this.ambientLight = new THREE.AmbientLight(0xffffff);
-  // this.scene.add(this.ambientLight);
+  // this.box = new THREE.Object3D();
   //
-  this.light = new THREE.DirectionalLight(0xffffff, 1);
-  this.light.position.set(-10, -10, -10);
+  // this.box.add(new THREE.Mesh(
+  //   new THREE.BoxGeometry( 1, 1, 1 ),
+  //   // new THREE.SphereGeometry(0.5, 32, 32),
+  //   new THREE.MeshPhongMaterial({especular: 0x050505, shininess: 100, color: 0x31B404, vertexColors: THREE.VertexColors})
+  // ));
+
+  //0x404040
+  this.light = new THREE.PointLight(0x404040, 1);
+  this.light.position.set(0, 8, 0);
   this.light.updateMatrix();
 
+  // this.directionalLight = new THREE.DirectionalLight(0xFFFACD, 0.3);
+  // this.directionalLight.position.set(0, 7, 0);
+  // this.directionalLight.target.position.set( 0, 0, 0 );
   this.scene.add(this.light);
+  this.scene.add(this.directionalLight);
   this.scene.add(this.box);
   this.scene.add(this.camera);
 
   this.camera.position.set(0, 0, 0);
-  this.box.position.set(0, 0, 10);
+  // this.box.position.set(0, 0, 10);
   this.camera.updateProjectionMatrix();
-
-  this.camera.lookAt(this.box.position);
 
   // this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
 
@@ -98,6 +100,14 @@ Game.Room.prototype.create = function () {
   };
 
   document.body.addEventListener('click', onClick);
+
+  window.addEventListener('resize', function() {
+    var WIDTH = window.innerWidth,
+        HEIGHT = window.innerHeight;
+    self.renderer.setSize(WIDTH, HEIGHT);
+    self.camera.aspect = WIDTH / HEIGHT;
+    self.camera.updateProjectionMatrix();
+});
 };
 
 Game.Room.prototype.render = function () {
@@ -123,7 +133,7 @@ Game.Room.prototype._createWalls = function () {
   // Game.load3DTexture(Game.Room.WALL_GEOMETRY_PATH, new THREE.MeshBasicMaterial({ color: 0xdfdfdf, map: THREE.ImageUtils.loadTexture('/textures/wall-texture.jpg') }), function (wall) {
     wall = new THREE.Mesh(
       new THREE.PlaneGeometry(Game.Room.WALL_WIDTH, Game.Room.WALL_HEIGHT),
-      new THREE.MeshBasicMaterial( {color: 0xdfdfdf, side: THREE.DoubleSide, map: THREE.ImageUtils.loadTexture('/textures/wall-texture.jpg')} )
+      new THREE.MeshPhongMaterial( {specular: 0x050505,shininess: 100, color: 0xdfdfdf, side: THREE.DoubleSide, map: THREE.ImageUtils.loadTexture(Room.WALL_TEXTURE_PATH)} )
     );
 
     this.scene.add(wall);
@@ -139,7 +149,7 @@ Game.Room.prototype._createWalls = function () {
 
   var roof = this.roof = new THREE.Mesh(
     new THREE.PlaneGeometry(Game.Room.ROOF_WIDTH, Game.Room.ROOF_HEIGHT),
-    new THREE.MeshBasicMaterial( {color: 0xdfdfdf, side: THREE.DoubleSide, map: THREE.ImageUtils.loadTexture('/textures/ceil-texture.jpg')} )
+    new THREE.MeshPhongMaterial( {specular: 0x050505,shininess: 100, color: 0xdfdfdf, side: THREE.DoubleSide, map: THREE.ImageUtils.loadTexture(Room.ROOF_TEXTURE_PATH)} )
   );
 
   this.scene.add(roof);
@@ -152,7 +162,7 @@ Game.Room.prototype._createWalls = function () {
 
   var floor = this.floor = new THREE.Mesh(
     new THREE.PlaneGeometry(Game.Room.FLOOR_WIDTH, Game.Room.FLOOR_HEIGHT),
-    new THREE.MeshBasicMaterial( {color: 0xdfdfdf, side: THREE.DoubleSide, map: THREE.ImageUtils.loadTexture('/textures/floor-texture.jpg')} )
+    new THREE.MeshPhongMaterial( {specular: 0x050505,shininess: 100, color: 0xdfdfdf, side: THREE.DoubleSide, map: THREE.ImageUtils.loadTexture(Room.FLOOR_TEXTURE_PATH)} )
   );
 
   this.scene.add(floor);
