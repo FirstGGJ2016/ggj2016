@@ -1,9 +1,5 @@
 <template name="room">
-  {{room}}
   {{#if currentUser}}
-    <!-- {{> game}} -->
-    <button id="start">Start!</button>
-    <button id="call">Call</button>
-  {{else}}
+   {{>game}}
   {{/if}}
 </template>
