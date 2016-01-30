@@ -5,13 +5,33 @@ var Room = Game.Room = function () {
 };
 
 Room.WALL_GEOMETRY_PATH = '/textures/wall.js';
+Room.WALL_WIDTH = 60;
+Room.WALL_HEIGHT = 20;
+
 Room.WALLS_POSITIONS = [
-  {x: 0, y: 0, z: 0}
+  {x: 0, y: 0, z: - Room.WALL_WIDTH / 2},
+  {x: 0, y: 0, z: Room.WALL_WIDTH / 2},
+  {x: Room.WALL_WIDTH / 2, y: 0, z: 0},
+  {x: - Room.WALL_WIDTH / 2, y: 0, z: 0}
+  // {x: -9, y: 10, z: 0}
+];
+
+Room.ROOF_WIDTH = Room.FLOOR_WIDTH = Room.ROOF_HEIGHT = Room.FLOOR_HEIGHT = 60;
+
+Room.ROOF_POSITION = {x: 0, y: 10, z: 0};
+Room.FLOOR_POSITION = {x: 0, y: -10, z: 0};
+Room.ROOF_ROTATION = Room.FLOOR_ROTATION = {x: 1.5708, y: 0, z: 0};
+
+Room.WALLS_ROTATIONS = [
+  {x: 0, y: 0, z: 3.14159},
+  {x: 0, y: 0, z: 3.14159},
+  {x: 0, y: 1.5708, z: 3.14159},
+  {x: 0, y: 1.5708, z: 3.14159}
   // {x: 1,y: 0,z: 1}
 ];
 
 Room.CAMERA_ROTATION_ANGLE = 1;
-Room.CAMERA_MOVEMENT = 1;
+Room.CAMERA_MOVEMENT = 5;
 Room.MOUSE_SENSIBILITY = 0.05;
 
 Room.prototype.start = function () {
@@ -65,7 +85,7 @@ Game.Room.prototype.create = function () {
 
   // this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
 
-  // this._createWalls();
+  this._createWalls();
 
   this._moveCameraOnKeyDown();
   this._rotateCamera();
@@ -93,26 +113,57 @@ Game.Room.prototype.stop = function () {
   this.stopped = true;
 };
 
-Game.Room.prototype._createWalls = function (wallIndex) {
-  wallIndex = wallIndex || ( this.walls = [] ) && 0;
+Game.Room.prototype._createWalls = function () {
+  this.walls = [];
 
-  var self = this;
+  var wall;
 
+  for (var i = 0; i < Game.Room.WALLS_POSITIONS.length; i++) {
 
-  Game.load3DTexture(Game.Room.WALL_GEOMETRY_PATH, new THREE.MeshBasicMaterial(0xCC0000), function (wall) {
-    // TODO: Add texture to the wall
-    self.scene.add(wall);
+  // Game.load3DTexture(Game.Room.WALL_GEOMETRY_PATH, new THREE.MeshBasicMaterial({ color: 0xdfdfdf, map: THREE.ImageUtils.loadTexture('/textures/wall-texture.jpg') }), function (wall) {
+    wall = new THREE.Mesh(
+      new THREE.PlaneGeometry(Game.Room.WALL_WIDTH, Game.Room.WALL_HEIGHT),
+      new THREE.MeshBasicMaterial( {color: 0xdfdfdf, side: THREE.DoubleSide, map: THREE.ImageUtils.loadTexture('/textures/wall-texture.jpg')} )
+    );
+
+    this.scene.add(wall);
     // TODO: Set update matrix to false
-    Game.setPosition(wall, Game.Room.WALLS_POSITIONS[wallIndex].x, Game.Room.WALLS_POSITIONS[wallIndex].y, Game.Room.WALLS_POSITIONS[wallIndex].z);
-    // TODO: Invoke update matrix
-    self.walls.push(wall);
+    wall.position.set(Game.Room.WALLS_POSITIONS[i].x, Game.Room.WALLS_POSITIONS[i].y, Game.Room.WALLS_POSITIONS[i].z);
 
-    self.camera.lookAt(wall);
-  });
+    wall.rotation.x = Game.Room.WALLS_ROTATIONS[i].x;
+    wall.rotation.y= Game.Room.WALLS_ROTATIONS[i].y;
+    wall.rotation.z = Game.Room.WALLS_ROTATIONS[i].z;
 
-  if (wallIndex < Game.Room.WALLS_POSITIONS.length - 1) {
-    this._createWalls(wallIndex + 1);
+    this.walls.push(wall);
   }
+
+  var roof = this.roof = new THREE.Mesh(
+    new THREE.PlaneGeometry(Game.Room.ROOF_WIDTH, Game.Room.ROOF_HEIGHT),
+    new THREE.MeshBasicMaterial( {color: 0xdfdfdf, side: THREE.DoubleSide, map: THREE.ImageUtils.loadTexture('/textures/ceil-texture.jpg')} )
+  );
+
+  this.scene.add(roof);
+
+  roof.position.set(Game.Room.ROOF_POSITION.x, Game.Room.ROOF_POSITION.y, Game.Room.ROOF_POSITION.z);
+
+  roof.rotation.x = Game.Room.ROOF_ROTATION.x;
+  roof.rotation.y= Game.Room.ROOF_ROTATION.y;
+  roof.rotation.z = Game.Room.ROOF_ROTATION.z;
+
+  var floor = this.floor = new THREE.Mesh(
+    new THREE.PlaneGeometry(Game.Room.FLOOR_WIDTH, Game.Room.FLOOR_HEIGHT),
+    new THREE.MeshBasicMaterial( {color: 0xdfdfdf, side: THREE.DoubleSide, map: THREE.ImageUtils.loadTexture('/textures/floor-texture.jpg')} )
+  );
+
+  this.scene.add(floor);
+
+  floor.position.set(Game.Room.FLOOR_POSITION.x, Game.Room.FLOOR_POSITION.y, Game.Room.FLOOR_POSITION.z);
+
+  floor.rotation.x = Game.Room.FLOOR_ROTATION.x;
+  floor.rotation.y= Game.Room.FLOOR_ROTATION.y;
+  floor.rotation.z = Game.Room.FLOOR_ROTATION.z;
+
+    // TODO: Invoke update matrix
 
 };
 
