@@ -46,7 +46,26 @@ Room.CHIP_MOVEMENTS = {
   n: {x: 0.14, z: -0.34},
   o: {x: 0.38, z: -0.34},
   p: {x: 0.66, z: -0.34},
-  q: {x: 0.94, z: -0.34}
+  q: {x: 0.94, z: -0.34},
+  r: {x: 1.22, z: -0.34},
+  s: {x: -1.05, z: 0.13},
+  t: {x: -0.84, z: 0.13},
+  u: {x: -0.52, z: 0.13},
+  v: {x: -0.20, z: 0.13},
+  w: {x: 0.12, z: 0.13},
+  x: {x: 0.48, z: 0.13},
+  y: {x: 0.76, z: 0.13},
+  z: {x: 1.08, z: 0.13},
+  1: {x: -0.94, z: 0.73},
+  2: {x: -0.72, z: 0.73},
+  3: {x: -0.50, z: 0.73},
+  4: {x: -0.24, z: 0.73},
+  5: {x: -0.02, z: 0.73},
+  6: {x: 0.22, z: 0.73},
+  7: {x: 0.42, z: 0.73},
+  8: {x: 0.64, z: 0.73},
+  9: {x: 0.84, z: 0.73},
+  0: {x: 1.02, z: 0.73}
 };
 
 Room.ROOF_TEXTURE_PATH = '/textures/ceil-texture.png';
@@ -92,13 +111,11 @@ Room.prototype.play = function (player) {
 
   var self = this;
 
-  setTimeout(function () {
-    self.blinkIlumination();
-  }, 3600);
+  self.blinkIlumination();
 
   setInterval(function () {
     self.blinkIlumination();
-  }, 3600000);
+  }, 30000);
 
   if (player === 'spirit') {
     this._playAsSpirit();
