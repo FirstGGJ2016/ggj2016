@@ -245,7 +245,7 @@ Game.Room.prototype._createWalls = function () {
   }
 
   Game.Room.prototype.blinkIlumination = function () {
-    if (this._blinking){ // semaphore
+    if (this._blinking || this.iluminationLamp.intensity === 0){ // semaphore
         return;
     }
 
@@ -392,17 +392,20 @@ Game.Room.prototype._playAsSpirit = function () {
     //play sound
     var iluminationLamp = self.iluminationLamp.intensity;
 
+    self._blinlking = true;
     self.globalIlumination.intensity = 0;
     self.iluminationLamp.intensity = 0;
-
-    // self.camera.position.set();
-    self.camera.lookAt(self.board.position);
+    self.redIlumination.intensity = 0;
 
     setTimeout(function () {
-      self.iluminationLamp.intensity = iluminationLamp;
-    }, 2000);
+      self.camera.position.set(0, 0, -15);
+      self.camera.lookAt(self.board.position);
+      setTimeout(function () {
+        self.redIlumination.intensity = 5;
+      }, 3000);
+    }, 300);
 
-  },100);
+  }, 900);
 
 };
 
