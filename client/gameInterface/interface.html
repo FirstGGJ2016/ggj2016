@@ -1,3 +1,12 @@
 <template name="gameInterface">
-  <h1>Here is the game interface</h1>
+  <div class="interface">
+    {{#if isSpirit}}
+      <div class="write">
+          <input id="word" type="text" placeholder="Write your answers here">
+      </div>
+      <div class="spirit help">
+
+      </div>
+    {{/if}}
+  </div>
 </template>

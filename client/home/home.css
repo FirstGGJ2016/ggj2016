@@ -35,13 +35,22 @@ button {
   color: rgb(115, 25, 25);
 }
 
-.home > h1 {
+.home > h1.message {
   position: absolute;
   top: calc(50% - 25px);
   width: 100%;
   color: rgb(115, 25, 25);
   border: 0;
   font-size: 22px;
+}
+
+.title {
+  width: 100%;
+  bottom: 2%;
+  margin: 0;
+  font-size: 80px;
+  position: absolute;
+  color: rgb(115, 25, 25);
 }
 
 .login-buttons-dropdown-align- {
@@ -60,4 +69,24 @@ button {
 
 .login-buttons-dropdown-align-:hover {
   opacity: 1;
+}
+
+.write {
+  width: 100%;
+  text-align: left;
+}
+
+.write input {
+  color: rgb(115, 25, 25);
+  border: 0;
+  position: absolute;
+  bottom: 2%;
+  width: 100%;
+  text-align: center;
+  background-color: rgba(0,0,0,0.4);
+  font-size: 40px;
+}
+
+.write input::-webkit-input-placeholder {
+  color: rgb(115, 25, 25);
 }

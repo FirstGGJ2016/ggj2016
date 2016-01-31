@@ -238,7 +238,7 @@ Game.Room.prototype._createWalls = function () {
     wall.position.set(Game.Room.WALLS_POSITIONS[i].x, Game.Room.WALLS_POSITIONS[i].y, Game.Room.WALLS_POSITIONS[i].z);
 
     wall.rotation.x = Game.Room.WALLS_ROTATIONS[i].x;
-    wall.rotation.y= Game.Room.WALLS_ROTATIONS[i].y;
+    wall.rotation.y = Game.Room.WALLS_ROTATIONS[i].y;
     wall.rotation.z = Game.Room.WALLS_ROTATIONS[i].z;
 
     this.walls.push(wall);
@@ -319,7 +319,7 @@ Game.Room.prototype._createWalls = function () {
 
 };
 
-Game.Room.prototype.spellWord = function (word) {
+Game.Room.prototype.spellWord = function (word, cb) {
   var index = -1,
       self = this;
   var spellLetter = function (){
@@ -328,6 +328,9 @@ Game.Room.prototype.spellWord = function (word) {
       setTimeout(function () {
         self._chipToLetter(word[index], spellLetter);
       }, 1500);
+    }
+    else {
+      cb();
     }
   };
 
@@ -549,55 +552,38 @@ Game.Room.prototype._moveCameraOnKeyDown = function () {
   var self = this;
 
   keyboardJS.bind('right', function(e) {
-    var z = self.camera.position.z;
-
     // self.camera.position.y = (Game.Room.CAMERA_ROTATION_ANGLE * Math.PI / 180) - y;
-    self.camera.position.z = z + Game.Room.CAMERA_MOVEMENT;
+    self.camera.position.z += Game.Room.CAMERA_MOVEMENT;
   });
 
   keyboardJS.bind('up', function(e) {
-    var z = self.camera.position.z;
-
     // self.camera.position.y = (Game.Room.CAMERA_ROTATION_ANGLE * Math.PI / 180) - y;
-    self.camera.position.z = z + Game.Room.CAMERA_MOVEMENT;
+    self.camera.position.z += Game.Room.CAMERA_MOVEMENT;
   });
 
   keyboardJS.bind('up + left', function(e) {
-    var z = self.camera.position.z,
-        x = self.camera.position.x;
-
-    self.camera.position.z = z + Game.Room.CAMERA_MOVEMENT; // TODO: Depends on the rotation of the camera
-    self.camera.position.x = x - Game.Room.CAMERA_MOVEMENT; // TODO: Depends on the rotation of the camera
+    self.camera.position.z += Game.Room.CAMERA_MOVEMENT; // TODO: Depends on the rotation of the camera
+    self.camera.position.x -= Game.Room.CAMERA_MOVEMENT; // TODO: Depends on the rotation of the camera
   });
 
   keyboardJS.bind('up + right', function(e) {
-    var z = self.camera.position.z,
-        x = self.camera.position.x;
-
-    self.camera.position.z =  z + Game.Room.CAMERA_MOVEMENT; // TODO: Depends on the rotation of the camera
-    self.camera.position.x = x + Game.Room.CAMERA_MOVEMENT; // TODO: Depends on the rotation of the camera
+    self.camera.position.z += Game.Room.CAMERA_MOVEMENT; // TODO: Depends on the rotation of the camera
+    self.camera.position.x += Game.Room.CAMERA_MOVEMENT; // TODO: Depends on the rotation of the camera
   });
 
   keyboardJS.bind('down', function(e) {
-    var z = self.camera.position.z;
-    self.camera.position.z =  z - Game.Room.CAMERA_MOVEMENT; // TODO: Depends on the rotation of the camera
+    self.camera.position.z -= Game.Room.CAMERA_MOVEMENT; // TODO: Depends on the rotation of the camera
 
   });
 
   keyboardJS.bind('down + right', function(e) {
-    var z = self.camera.position.z,
-        x = self.camera.position.x;
-
-    self.camera.position.z =  z - Game.Room.CAMERA_MOVEMENT; // TODO: Depends on the rotation of the camera
-    self.camera.position.x = x + Game.Room.CAMERA_MOVEMENT; // TODO: Depends on the rotation of the camera
+    self.camera.position.z -= Game.Room.CAMERA_MOVEMENT; // TODO: Depends on the rotation of the camera
+    self.camera.position.x += Game.Room.CAMERA_MOVEMENT; // TODO: Depends on the rotation of the camera
   });
 
   keyboardJS.bind('down + left', function(e) {
-    var z = self.camera.position.z,
-        x = self.camera.position.x;
-
-    self.camera.position.z =  z - Game.Room.CAMERA_MOVEMENT; // TODO: Depends on the rotation of the camera
-    self.camera.position.x = x - Game.Room.CAMERA_MOVEMENT; // TODO: Depends on the rotation of the camera
+    self.camera.position.z -= Game.Room.CAMERA_MOVEMENT; // TODO: Depends on the rotation of the camera
+    self.camera.position.x -= Game.Room.CAMERA_MOVEMENT; // TODO: Depends on the rotation of the camera
   });
 
   window.addEventListener('keyup', function () {
