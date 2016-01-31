@@ -401,7 +401,7 @@ Game.Room.prototype._playAsSpirit = function () {
     self.redIlumination.intensity = 0;
 
     setTimeout(function () {
-      self.camera.position.set(0, 0, -15);
+      self.camera.position.set(0, 0, -7);
       self.camera.lookAt(self.board.position);
       setTimeout(function () {
         self.redIlumination.intensity = 5;
