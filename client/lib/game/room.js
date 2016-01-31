@@ -384,7 +384,25 @@ Game.Room.prototype.isKeyDownPressed = function () {
 };
 
 Game.Room.prototype._playAsSpirit = function () {
+  var self = this;
 
+  this.blinkIlumination();
+
+  setTimeout(function (){
+    //play sound
+    var iluminationLamp = self.iluminationLamp.intensity;
+
+    self.globalIlumination.intensity = 0;
+    self.iluminationLamp.intensity = 0;
+
+    // self.camera.position.set();
+    self.camera.lookAt(self.board.position);
+
+    setTimeout(function () {
+      self.iluminationLamp.intensity = iluminationLamp;
+    }, 2000);
+
+  },100);
 
 };
 
@@ -392,11 +410,15 @@ Game.Room.prototype._playAsPerson = function () {
   var self = this;
 
   setTimeout(function () {
-    self.cameraTarget = {x: 0, y: 0, z: 2};
-    self.cameraTargetCb = function (){
-      self.camera.lookAt(self.board.position);
-    };
-  }, 3600);
+    self.blinkIlumination();
+    self.globalIlumination.intensity = 0;
+    setTimeout(function () {
+      self.cameraTarget = {x: 0, y: 0, z: 2};
+      self.cameraTargetCb = function (){
+        self.camera.lookAt(self.board.position);
+      };
+    }, 1000);
+  }, 500);
 };
 
 Game.Room.prototype._moveCameraTo = function (position) {
