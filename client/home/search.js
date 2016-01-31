@@ -30,6 +30,10 @@ Template.search.events({
       }
     });
   },
+
+  'mouseenter #start': function() {
+    _room.blinkIlumination();
+  },
 });
 
 // Template.search.events({
