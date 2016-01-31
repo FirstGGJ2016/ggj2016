@@ -15,6 +15,8 @@ Game.setPosition = function (object, x, y, z) {
 };
 
 Game.load3DTexture = function (geometryPath, material, cb) {
+  // var loader = new THREE.JSONLoader();
+  // instantiate a loader
   var loader = new THREE.JSONLoader();
 
   return loader.load(geometryPath, function (geometry) {

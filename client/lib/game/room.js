@@ -4,11 +4,19 @@ var Room = Game.Room = function () {
   this.create();
 };
 
+Room.BOARD_GEOMETRY_PATH = '/textures/ouija-geometry.json';
+Room.BOARD_TEXTURE_PATH = '/textures/ouija-texture.png';
+
+Room.TABLE_GEOMETRY_PATH = '/textures/table-geometry.json';
+
+Room.LAMP_GEOMETRY_PATH = '/textures/lamp-geometry.json';
+
+
 Room.WALL_TEXTURE_PATH = '/textures/wall-texture.jpg';
 Room.WALL_WIDTH = 60;
 Room.WALL_HEIGHT = 20;
 
-Room.WALLS_POSITIONS = [
+Room.WALLS_POSITIONS = [ // Distance between two parallel walls 60
   {x: 0, y: 0, z: - Room.WALL_WIDTH / 2},
   {x: 0, y: 0, z: Room.WALL_WIDTH / 2},
   {x: Room.WALL_WIDTH / 2, y: 0, z: 0},
@@ -20,8 +28,8 @@ Room.ROOF_TEXTURE_PATH = '/textures/ceil-texture.png';
 Room.FLOOR_TEXTURE_PATH = '/textures/floor-texture.jpg';
 Room.ROOF_WIDTH = Room.FLOOR_WIDTH = Room.ROOF_HEIGHT = Room.FLOOR_HEIGHT = 60;
 
-Room.ROOF_POSITION = {x: 0, y: 10, z: 0};
-Room.FLOOR_POSITION = {x: 0, y: -10, z: 0};
+Room.ROOF_POSITION = {x: 0, y: 10, z: 0}; // CEIL POSITION 10Y
+Room.FLOOR_POSITION = {x: 0, y: -10, z: 0}; // FLOOR POSITION -10Y
 Room.ROOF_ROTATION = Room.FLOOR_ROTATION = {x: 1.5708, y: 0, z: 0};
 
 Room.WALLS_ROTATIONS = [
@@ -54,73 +62,83 @@ Room.prototype.start = function () {
 };
 
 Game.Room.prototype.create = function () {
-  this.camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000);
-
   window.scene = this.scene = new THREE.Scene();
 
   this.renderer = this._createRenderer();
 
-  // this.box = new THREE.Object3D();
-  //
-  // this.box.add(new THREE.Mesh(
-  //   new THREE.BoxGeometry( 1, 1, 1 ),
-  //   // new THREE.SphereGeometry(0.5, 32, 32),
-  //   new THREE.MeshPhongMaterial({especular: 0x050505, shininess: 100, color: 0x31B404, vertexColors: THREE.VertexColors})
-  // ));
+  // ----CAMERA----
+  this.camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000);
+  this.camera.position.set(0, 0, 15);
 
-  //0x404040
-  this.light = new THREE.PointLight(0x404040, 1);
-  this.light.position.set(0, 8, 0);
-  this.light.updateMatrix();
 
-  // this.directionalLight = new THREE.DirectionalLight(0xFFFACD, 0.3);
-  // this.directionalLight.position.set(0, 7, 0);
-  // this.directionalLight.target.position.set( 0, 0, 0 );
-  this.scene.add(this.light);
-  this.scene.add(this.directionalLight);
-  this.scene.add(this.box);
+  // ----LIGHT---
+  this.globalIlumination = new THREE.PointLight(0x404040, 0.6);
+  this.globalIlumination.position.set(0, 0, 0);
+  this.globalIlumination.updateMatrix();
+
+
+
+  // ----SETUP SCENE---
+  this.scene.add(this.globalIlumination);
+  this.scene.add(this.lamp);
   this.scene.add(this.camera);
 
-  this.camera.position.set(0, 0, 0);
-  // this.box.position.set(0, 0, 10);
-  this.camera.updateProjectionMatrix();
-
-  // this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
 
   this._createWalls();
+  this._createBoard();
+  this._createLamp();
+  this._createTable();
 
   this._moveCameraOnKeyDown();
   this._rotateCamera();
+  this._addEventListeners();
 
+};
+
+Game.Room.prototype._createBoard = function () {
   var self = this;
 
-  var onClick = function() {
-    self._lockPointer();
-    document.body.removeEventListener('click', onClick);
-  };
+  Game.load3DTexture(Game.Room.BOARD_GEOMETRY_PATH, new THREE.MeshPhongMaterial( { /*specular: 0x050505,shininess: 100,*/ color: 0xdfdfdf, map: THREE.ImageUtils.loadTexture(Room.BOARD_TEXTURE_PATH) }), function (board) {
+    self.board = board;
+    board.scale.set(10, 10, 10);
+    board.position.set(0, -2.70, 0);
+    self.scene.add(board);
 
-  document.body.addEventListener('click', onClick);
+    // ----LAMP---
+    self.redIlumination = new THREE.PointLight(0xFF0000, 2, 4);
+    self.redIlumination.position.set(0, 0, 0);
 
-  window.addEventListener('resize', function() {
-    var WIDTH = window.innerWidth,
-        HEIGHT = window.innerHeight;
-    self.renderer.setSize(WIDTH, HEIGHT);
-    self.camera.aspect = WIDTH / HEIGHT;
-    self.camera.updateProjectionMatrix();
-});
+    // 0xFF0000
+    self.iluminationLamp = new THREE.PointLight(0xFFFACD, 2, 6);
+    self.iluminationLamp.position.set(0, 0, 0);
+    // self.lamp.updateMatrix();
+    // self.lamp = new THREE.PointerLight(0xFFFACD, , 1);
+    scene.add(self.iluminationLamp);
+    scene.add(self.redIlumination);
+  });
 };
 
-Game.Room.prototype.render = function () {
-  // this.controls.update();
-  // this.camera.lookAt(this.scene.position);
-  // if (this.isKeyDownPressed()) {
-  //   this.rotateCamera();
-  // }
+Game.Room.prototype._createLamp = function () {
+  var self = this;
+
+  Game.load3DTexture(Game.Room.LAMP_GEOMETRY_PATH, new THREE.MeshPhongMaterial( {color: 0xdfdfdf, /*map: THREE.ImageUtils.loadTexture(Room.LAMP_TEXTURE_PATH)*/ } ), function (lamp) {
+    self.lamp = lamp;
+    lamp.scale.set(3, 3, 3);
+    lamp.position.set(0, 5, 0);
+    self.scene.add(lamp);
+  });
 
 };
 
-Game.Room.prototype.stop = function () {
-  this.stopped = true;
+Game.Room.prototype._createTable = function () {
+  var self = this;
+
+  Game.load3DTexture(Game.Room.TABLE_GEOMETRY_PATH, new THREE.MeshPhongMaterial( {specular: 0x050505,shininess: 100, color: 0xdfdfdf, /*map: THREE.ImageUtils.loadTexture(Room.BOARD_TEXTURE_PATH) */}), function (table) {
+    self.table = table;
+    table.scale.set(6, 6, 6);
+    table.position.set(0, -3.70, 0);
+    self.scene.add(table);
+  });
 };
 
 Game.Room.prototype._createWalls = function () {
@@ -146,6 +164,45 @@ Game.Room.prototype._createWalls = function () {
 
     this.walls.push(wall);
   }
+
+  Game.Room.prototype.blinkIlumination = function () {
+    var lampIntensity = this.iluminationLamp.intensity,
+        redIntensity = this.redIlumination.intensity,
+        self = this;
+
+    var blinks = 7;
+
+    var getRandomBlinkTimer = function () { // return random number between 50 and 100
+       var random = String(Math.random()),
+           number;
+
+       return parseInt(random * 100);
+
+    };
+
+    var blink = function () {
+      --blinks;
+
+      if (!blinks) {
+        return;
+      }
+      else {
+        self.iluminationLamp.intensity = 0;
+        self.redIlumination.intensity = 0;
+
+        setTimeout(function () {
+          self.iluminationLamp.intensity = lampIntensity;
+          self.redIlumination.intensity = redIntensity;
+          setTimeout(function () {
+            blink();
+          }, getRandomBlinkTimer());
+        }, getRandomBlinkTimer());
+      }
+    };
+
+    blink();
+
+  };
 
   var roof = this.roof = new THREE.Mesh(
     new THREE.PlaneGeometry(Game.Room.ROOF_WIDTH, Game.Room.ROOF_HEIGHT),
@@ -177,6 +234,35 @@ Game.Room.prototype._createWalls = function () {
 
 };
 
+Game.Room.prototype.render = function () {
+
+};
+
+Game.Room.prototype.stop = function () {
+  this.stopped = true;
+};
+
+Game.Room.prototype._addEventListeners = function () {
+  var self = this;
+
+  var onClick = function() {
+    self._lockPointer();
+    document.body.removeEventListener('click', onClick);
+  };
+
+  document.body.addEventListener('click', onClick);
+
+  window.addEventListener('resize', function() {
+    var WIDTH = window.innerWidth,
+        HEIGHT = window.innerHeight;
+    self.renderer.setSize(WIDTH, HEIGHT);
+    self.camera.aspect = WIDTH / HEIGHT;
+    self.camera.updateProjectionMatrix();
+  });
+
+};
+
+
 Game.Room.prototype.isKeyDownPressed = function () {
   return this.downKeyPressed || this.upKeyPressed;
 };
@@ -197,7 +283,7 @@ Game.Room.prototype._rotateCamera = function () {
 
   document.body.addEventListener('mousemove', function (e) {
     if (e.movementX){
-      var xOffset = Math.abs(e.movementX);
+      var xOffset = Math.abs(e.movementX),
       yDegrees = xOffset * Room.MOUSE_SENSIBILITY,
       yRadians = (yDegrees * Math.PI / 180);
 
