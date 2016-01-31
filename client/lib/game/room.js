@@ -245,6 +245,10 @@ Game.Room.prototype._createWalls = function () {
   }
 
   Game.Room.prototype.blinkIlumination = function () {
+    if (this._blinking){ // semaphore
+        return;
+    }
+
     var lampIntensity = this.iluminationLamp.intensity,
         redIntensity = this.redIlumination.intensity,
         self = this;
@@ -263,6 +267,7 @@ Game.Room.prototype._createWalls = function () {
       --blinks;
 
       if (!blinks) {
+        self._blinking = false;
         return;
       }
       else {
@@ -279,6 +284,7 @@ Game.Room.prototype._createWalls = function () {
       }
     };
 
+    this._blinking = true;
     blink();
 
   };
