@@ -2,8 +2,20 @@ var Game = this.Game = function () {
 
 };
 
+var musicTrack = null;
+
 Game.createRoom = function () {
   window._room = new Game.Room().start();
+};
+
+Game.playMusic = function (track) {
+  if (musicTrack) {
+    musicTrack.pause();
+  }
+
+  musicTrack = document.getElementById(track);
+
+  musicTrack.play();
 };
 
 Game.setPosition = function (object, x, y, z) {

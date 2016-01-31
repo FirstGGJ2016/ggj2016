@@ -108,6 +108,7 @@ Room.prototype.start = function () {
 Room.prototype.play = function (player) {
   this._moveCameraOnKeyDown();
   this._rotateCamera();
+  Game.playMusic('ambient-music-theme');
 
   var self = this;
 
@@ -131,6 +132,8 @@ Room.prototype.stop = function () {
 };
 
 Game.Room.prototype.create = function () {
+  Game.playMusic('main-music-theme');
+
   window.scene = this.scene = new THREE.Scene();
 
   this.renderer = this._createRenderer();
@@ -504,6 +507,7 @@ Game.Room.prototype._moveChipTo = function (position) {
     }
   }
 };
+
 
 Game.Room.prototype._lockPointer = function () {
   // document.body.requestPointerLock = document.body.requestPointerLock ||
