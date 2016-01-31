@@ -8,6 +8,7 @@ Room.BOARD_GEOMETRY_PATH = '/textures/ouija-geometry.json';
 Room.BOARD_TEXTURE_PATH = '/textures/ouija-texture.png';
 
 Room.TABLE_GEOMETRY_PATH = '/textures/table-geometry.json';
+Room.TABLE_TEXTURE_PATH = '/textures/table-texture.png';
 
 Room.LAMP_GEOMETRY_PATH = '/textures/lamp-geometry.json';
 
@@ -61,6 +62,33 @@ Room.prototype.start = function () {
   return this;
 };
 
+Room.prototype.play = function (player) {
+  this._moveCameraOnKeyDown();
+  this._rotateCamera();
+
+  var self = this;
+
+  setTimeout(function () {
+    self.blinkIlumination();
+  }, 3600);
+
+  setInterval(function () {
+    self.blinkIlumination();
+  }, 3600000);
+
+  if (player === 'spirit') {
+    this._playAsSpirit();
+  }
+  else {
+    this._playAsPerson();
+  }
+
+};
+
+Room.prototype.stop = function () {
+  // TODO
+};
+
 Game.Room.prototype.create = function () {
   window.scene = this.scene = new THREE.Scene();
 
@@ -72,10 +100,9 @@ Game.Room.prototype.create = function () {
 
 
   // ----LIGHT---
-  this.globalIlumination = new THREE.PointLight(0x404040, 0.6);
+  this.globalIlumination = new THREE.PointLight(0x404040, 0.5);
   this.globalIlumination.position.set(0, 0, 0);
   this.globalIlumination.updateMatrix();
-
 
 
   // ----SETUP SCENE---
@@ -89,19 +116,7 @@ Game.Room.prototype.create = function () {
   this._createLamp();
   this._createTable();
 
-  this._moveCameraOnKeyDown();
-  this._rotateCamera();
   this._addEventListeners();
-
-  var self = this;
-
-  setTimeout(function () {
-    self.blinkIlumination();
-  }, 3600);
-
-  setInterval(function () {
-    self.blinkIlumination();
-  }, 3600000);
 
 };
 
@@ -143,7 +158,7 @@ Game.Room.prototype._createLamp = function () {
 Game.Room.prototype._createTable = function () {
   var self = this;
 
-  Game.load3DTexture(Game.Room.TABLE_GEOMETRY_PATH, new THREE.MeshPhongMaterial( {specular: 0x050505,shininess: 100, color: 0xdfdfdf, /*map: THREE.ImageUtils.loadTexture(Room.BOARD_TEXTURE_PATH) */}), function (table) {
+  Game.load3DTexture(Game.Room.TABLE_GEOMETRY_PATH, new THREE.MeshPhongMaterial( {color: 0xdfdfdf,/* map: THREE.ImageUtils.loadTexture(Room.TABLE_TEXTURE_PATH)*/ }), function (table) {
     self.table = table;
     table.scale.set(6, 6, 6);
     table.position.set(0, -3.70, 0);
@@ -276,6 +291,17 @@ Game.Room.prototype._addEventListeners = function () {
 Game.Room.prototype.isKeyDownPressed = function () {
   return this.downKeyPressed || this.upKeyPressed;
 };
+
+Game.Room.prototype._playAsSpirit = function () {
+
+
+};
+
+Game.Room.prototype._playAsPerson = function () {
+
+
+};
+
 
 Game.Room.prototype._lockPointer = function () {
   document.body.requestPointerLock = document.body.requestPointerLock ||
