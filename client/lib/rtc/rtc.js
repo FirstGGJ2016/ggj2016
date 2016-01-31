@@ -63,8 +63,9 @@ RTC.prototype._onAddStream = function(e) {
   //TODO: new stream!! Show it!
 
   var aud = $('#audio');
-  e.stream = this._audio._getUserMedia(e.stream);
 
+  // e.stream = this._audio._getUserMedia(e.stream);
+  Session.set('homeTemp', 'gameInterface');
   aud[0].src = URL.createObjectURL(e.stream);
 };
 
@@ -111,7 +112,9 @@ RTC.prototype._connection = function() {
     this._pc.setRemoteDescription(new RTCSessionDescription(room.callee));
     this._done = true;
   } else if (!this._caller && room.caller) {
-    Session.set('homeTemp', 'games');
+
+    Session.set('homeTemp', 'gameInterface');
+
     this._done = true;
     this._pc.setRemoteDescription(new RTCSessionDescription(room.caller));
     this._createAnswer();

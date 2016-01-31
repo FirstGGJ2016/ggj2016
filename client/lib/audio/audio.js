@@ -52,8 +52,9 @@ Audio.prototype._getUserMedia = function(stream) {
   // this._mediaStreamSource.connect(this._scriptProcessor);
   this._mediaStreamSource.connect(distortion);
   distortion.connect(biquad);
-
-  return stream;
+  var remote = this._audioContext.createMediaStreamDestination();
+  biquad.connect(remote);
+  return remote.stream;
 
   // biquad.connect(this._audioContext.destination);
 
@@ -84,7 +85,7 @@ Audio.prototype._processAudio = function(e) {
 Audio.prototype.start = function(cb) {
   var self = this;
 
-  navigator.getUserMedia({ audio: true, video: true }, function(stream) {
+  navigator.getUserMedia({ audio: true }, function(stream) {
     stream = self._getUserMedia(stream);
 
     if (cb) {
