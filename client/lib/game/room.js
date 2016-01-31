@@ -93,6 +93,16 @@ Game.Room.prototype.create = function () {
   this._rotateCamera();
   this._addEventListeners();
 
+  var self = this;
+
+  setTimeout(function () {
+    self.blinkIlumination();
+  }, 3600);
+
+  setInterval(function () {
+    self.blinkIlumination();
+  }, 3600000);
+
 };
 
 Game.Room.prototype._createBoard = function () {
