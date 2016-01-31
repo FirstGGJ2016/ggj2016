@@ -8,12 +8,13 @@ Game.createRoom = function () {
   window._room = new Game.Room().start();
 };
 
-Game.playMusic = function (track) {
+Game.playMusic = function (track, volume) {
   if (musicTrack) {
     musicTrack.pause();
   }
 
   musicTrack = document.getElementById(track);
+  musicTrack.volume = volume || 1;
 
   musicTrack.play();
 };

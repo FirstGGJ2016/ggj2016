@@ -132,7 +132,7 @@ Room.prototype.stop = function () {
 };
 
 Game.Room.prototype.create = function () {
-  Game.playMusic('main-music-theme');
+  Game.playMusic('main-music-theme', 0.1);
 
   window.scene = this.scene = new THREE.Scene();
 
