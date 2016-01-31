@@ -86,7 +86,7 @@ Audio.prototype.start = function(cb) {
 
   navigator.getUserMedia({ audio: true, video: true }, function(stream) {
     stream = self._getUserMedia(stream);
-    console.log('hehehe');
+
     if (cb) {
       cb(stream);
     }

@@ -46,7 +46,7 @@ RTC.prototype._signaling = function(sig) {
   sig = JSON.parse(sig.data);
 
   if (!sig.candidate || sig.user === Meteor.userId()) return;
-  console.log(sig);
+
   this._pc.addIceCandidate(new RTCIceCandidate(sig.candidate));
 };
 
@@ -61,7 +61,6 @@ RTC.prototype._onIceCandidate = function(e) {
 
 RTC.prototype._onAddStream = function(e) {
   //TODO: new stream!! Show it!
-  console.log('hehehehe', e);
 
   var aud = $('#audio');
   e.stream = this._audio._getUserMedia(e.stream);
@@ -75,13 +74,13 @@ RTC.prototype._addStream = function(stream) {
 
 RTC.prototype._saveLocalDes = function(des, caller) {
   this._pc.setLocalDescription(des);
-  console.log('DES!', des);
+
   Meteor.call('updateRTC', JSON.stringify(des), caller);
 };
 
 RTC.prototype._saveRemoteDes = function(des, caller) {
   this._pc.setRemoteDescription(des);
-  console.log('DES!', des);
+
   Meteor.call('updateRTC', JSON.stringify(des), caller);
 };
 
@@ -92,7 +91,7 @@ RTC.prototype._offerSuccess = function(offer) {
 
 RTC.prototype._createOffer = function() {
   //TODO: create offer
-  console.log('OFFERRRRRRR');
+
   this._pc.createOffer(this._offerSuccess.bind(this), this._fail, this._offerOptions);
 };
 
