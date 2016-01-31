@@ -506,12 +506,12 @@ Game.Room.prototype._moveChipTo = function (position) {
 };
 
 Game.Room.prototype._lockPointer = function () {
-  document.body.requestPointerLock = document.body.requestPointerLock ||
-			     document.body.mozRequestPointerLock ||
-			     document.body.webkitRequestPointerLock;
-
-  // Ask the browser to lock the pointer
-  document.body.requestPointerLock();
+  // document.body.requestPointerLock = document.body.requestPointerLock ||
+	// 		     document.body.mozRequestPointerLock ||
+	// 		     document.body.webkitRequestPointerLock;
+  //
+  // // Ask the browser to lock the pointer
+  // document.body.requestPointerLock();
 };
 
 Game.Room.prototype._rotateCamera = function () {
