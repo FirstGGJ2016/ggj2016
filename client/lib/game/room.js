@@ -12,6 +12,9 @@ Room.TABLE_TEXTURE_PATH = '/textures/table-texture.png';
 
 Room.LAMP_GEOMETRY_PATH = '/textures/lamp-geometry.json';
 
+Room.CHIP_GEOMETRY_PATH = '/textures/chip-geometry.json';
+Room.CHIP_TEXTURE_PATH = '/textures/chip-texture.png';
+
 
 Room.WALL_TEXTURE_PATH = '/textures/wall-texture.jpg';
 Room.WALL_WIDTH = 60;
@@ -24,6 +27,27 @@ Room.WALLS_POSITIONS = [ // Distance between two parallel walls 60
   {x: - Room.WALL_WIDTH / 2, y: 0, z: 0}
   // {x: -9, y: 10, z: 0}
 ];
+
+Room.CHIP_MOVEMENT_VELOCITY = 0.01;
+Room.CHIP_MOVEMENTS = {
+  a: {x: -1, z: -0.8},
+  b: {x: -0.68, z: -0.8},
+  c: {x: -0.38, z: -0.8},
+  d: {x: 0.10, z: -0.8},
+  e: {x: 0.2, z: -0.8},
+  f: {x: 0.45, z: -0.8},
+  g: {x: 0.7, z: -0.8},
+  h: {x: 0.95, z: -0.8},
+  i: {x: -1.2, z: -0.34},
+  j: {x: -1, z: -0.34},
+  k: {x: -0.78, z: -0.34},
+  l: {x: -0.5, z: -0.34},
+  m: {x: -0.18, z: -0.34},
+  n: {x: 0.14, z: -0.34},
+  o: {x: 0.38, z: -0.34},
+  p: {x: 0.66, z: -0.34},
+  q: {x: 0.94, z: -0.34}
+};
 
 Room.ROOF_TEXTURE_PATH = '/textures/ceil-texture.png';
 Room.FLOOR_TEXTURE_PATH = '/textures/floor-texture.jpg';
@@ -42,7 +66,7 @@ Room.WALLS_ROTATIONS = [
 ];
 
 Room.CAMERA_ROTATION_ANGLE = 1;
-Room.CAMERA_MOVEMENT = 2;
+Room.CAMERA_MOVEMENT = 0.1;
 Room.MOUSE_SENSIBILITY = 0.05;
 
 Room.prototype.start = function () {
@@ -115,6 +139,7 @@ Game.Room.prototype.create = function () {
   this._createBoard();
   this._createLamp();
   this._createTable();
+  this._createChip();
 
   this._addEventListeners();
 
@@ -143,10 +168,22 @@ Game.Room.prototype._createBoard = function () {
   });
 };
 
+Game.Room.prototype._createChip = function () {
+  var self = this;
+
+  Game.load3DTexture(Game.Room.CHIP_GEOMETRY_PATH, new THREE.MeshPhongMaterial( { color: 0x895f5f/* ,map: THREE.ImageUtils.loadTexture(Room.CHIP_TEXTURE_PATH) */}), function (chip) {
+    self.chip = chip;
+    chip.scale.set(13, 13, 13);
+    chip.position.set(0, -2.22, 0);
+    self.scene.add(chip);
+  });
+};
+
+
 Game.Room.prototype._createLamp = function () {
   var self = this;
 
-  Game.load3DTexture(Game.Room.LAMP_GEOMETRY_PATH, new THREE.MeshPhongMaterial( {color: 0xdfdfdf, /*map: THREE.ImageUtils.loadTexture(Room.LAMP_TEXTURE_PATH)*/ } ), function (lamp) {
+  Game.load3DTexture(Game.Room.LAMP_GEOMETRY_PATH, new THREE.MeshPhongMaterial( {color: 0xdfdfdf} ), function (lamp) {
     self.lamp = lamp;
     lamp.scale.set(3, 3, 3);
     lamp.position.set(0, 5, 0);
@@ -259,8 +296,39 @@ Game.Room.prototype._createWalls = function () {
 
 };
 
-Game.Room.prototype.render = function () {
+Game.Room.prototype.spellWord = function (word) {
+  var index = -1,
+      self = this;
+  var spellLetter = function (){
+    if (index < word.length - 1){
+      ++index;
+      setTimeout(function () {
+        self._chipToLetter(word[index], spellLetter);
+      }, 1500);
+    }
+  };
 
+  spellLetter();
+};
+
+Game.Room.prototype._chipToLetter = function (letter, cb) {
+  this.chipTarget = Room.CHIP_MOVEMENTS[letter];
+  this.chipTargetCb = cb;
+  this._moveChipTo(this.chipTarget);
+};
+
+Game.Room.prototype.render = function () {
+  if (this.cameraTarget){
+    this._moveCameraTo(this.cameraTarget);
+  }
+
+  if (this.chipTarget){
+    this._moveChipTo(this.chipTarget);
+  }
+
+  // if (this.rotateCamera) {
+  //   // TODO
+  // }
 };
 
 Game.Room.prototype.stop = function () {
@@ -298,10 +366,93 @@ Game.Room.prototype._playAsSpirit = function () {
 };
 
 Game.Room.prototype._playAsPerson = function () {
+  var self = this;
 
-
+  setTimeout(function () {
+    self.cameraTarget = {x: 0, y: 0, z: 2};
+    self.cameraTargetCb = function (){
+      self.camera.lookAt(self.board.position);
+    };
+  }, 3600);
 };
 
+Game.Room.prototype._moveCameraTo = function (position) {
+  var movement = false,
+      cameraX = this.camera.position.x,
+      cameraY = this.camera.position.y,
+      cameraZ = this.camera.position.z;
+
+  if (parseInt(cameraX) !== position.x){
+      movement = true;
+      if (cameraX > position.x){
+        this.camera.position.x -= Room.CAMERA_MOVEMENT;
+      }
+      else {
+        this.camera.position.x += Room.CAMERA_MOVEMENT;
+      }
+  }
+
+  if (parseInt(cameraY) !== position.y){
+      movement = true;
+      if (cameraY > position.y){
+        this.camera.position.y -= Room.CAMERA_MOVEMENT;
+      }
+      else {
+        this.camera.position.y += Room.CAMERA_MOVEMENT;
+      }
+  }
+
+  if (parseInt(cameraZ) !== position.z){
+      movement = true;
+      if (cameraZ > position.z){
+        this.camera.position.z -= Room.CAMERA_MOVEMENT;
+      }
+      else {
+        this.camera.position.z += Room.CAMERA_MOVEMENT;
+      }
+  }
+
+  if (!movement) {
+    this.cameraTarget = null;
+    if (typeof this.cameraTargetCb === 'function') {
+      this.cameraTargetCb();
+    }
+  }
+};
+
+
+Game.Room.prototype._moveChipTo = function (position) {
+  var movement = false,
+      chipPositionX = parseFloat(this.chip.position.x.toFixed(2)),
+      chipPositionZ = parseFloat(this.chip.position.z.toFixed(2));
+
+  if (chipPositionX !== position.x){
+      movement = true;
+      if (chipPositionX > position.x){
+        this.chip.position.x -= Room.CHIP_MOVEMENT_VELOCITY;
+      }
+      else {
+        this.chip.position.x += Room.CHIP_MOVEMENT_VELOCITY;
+      }
+  }
+
+  if (chipPositionZ !== position.z){
+      movement = true;
+      if (chipPositionZ > position.z){
+        this.chip.position.z -= Room.CHIP_MOVEMENT_VELOCITY;
+      }
+      else {
+        this.chip.position.z += Room.CHIP_MOVEMENT_VELOCITY;
+      }
+  }
+
+  if (!movement) {
+    this.chipTarget = null;
+    if (typeof this.chipTargetCb === 'function') {
+      this.chipTargetCb();
+    }
+  }
+};
 
 Game.Room.prototype._lockPointer = function () {
   document.body.requestPointerLock = document.body.requestPointerLock ||
