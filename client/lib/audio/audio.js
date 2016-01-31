@@ -54,7 +54,7 @@ Audio.prototype._getUserMedia = function(stream) {
   distortion.connect(biquad);
   var remote = this._audioContext.createMediaStreamDestination();
   biquad.connect(remote);
-  return remote.stream;
+  return stream;
 
   // biquad.connect(this._audioContext.destination);
 
