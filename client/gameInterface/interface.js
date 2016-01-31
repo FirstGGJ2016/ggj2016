@@ -25,7 +25,7 @@ Template.gameInterface.events({
       var input = $('#word')[0];
       nextWord = false;
       Room.emitWord(input.value);
-
+      input.value = 'spelling...';
       _room.spellWord(input.value, function() {
         input.value = '';
         nextWord = true;
