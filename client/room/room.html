@@ -1,5 +1,9 @@
 <template name="room">
+  <audio id="audio" autoplay src=""></audio>
   {{#if currentUser}}
-   {{>game}}
+   <!-- {{>game}} -->
+    <div class="home">
+     {{> Template.dynamic template=temp}}
+   </div>
   {{/if}}
 </template>

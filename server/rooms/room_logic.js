@@ -46,4 +46,10 @@ Meteor.methods({
 
     return false;
   },
+
+  updateRTC: function(des, caller) {
+    var id = this.userId;
+    des = JSON.parse(des);
+    Rooms.update({ $or: [{ owner: id }, { 'person.id':id }, { 'spirit.id':id }] }, { $set: caller ? { caller:des } : { callee:des } });
+  },
 });
